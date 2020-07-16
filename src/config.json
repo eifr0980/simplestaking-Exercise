@@ -1,0 +1,3 @@
+{
+  "apiUrl": "https://api.tzstats.com/tables/op?columns=row_id,type,volume,time,sender&receiver=tz1gfArv665EUkSg2ojMBzcbfwuPxAvqPvjo&type=transaction&limit=15"
+}

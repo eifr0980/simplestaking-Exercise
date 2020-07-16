@@ -1,0 +1,6 @@
+<div *ngFor="let item of transactions">
+    <h1>Type: {{ item[1] }}</h1>
+    <h1>Volume: {{ item[2] }}</h1>
+    <h1>Date: {{ item[3] | date:'MMM d y, h:mm' }}</h1>
+    <h1>Sender: {{ item[4] }}</h1>
+</div>

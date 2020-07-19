@@ -1,16 +1,22 @@
 import { createReducer, on } from '@ngrx/store';
-import { increment, decrement, reset } from './data.actions';
+import { ApiSuccess } from './data.actions';
 import Transaction from './transaction';
-
-export const initialState: Transaction[] = [];
-
+export interface RootState {
+  error: any;
+  transactions: Transaction[];
+}
+export const initialState = {
+  error: null,
+  transactions: [],
+};
 const _dataReducer = createReducer(
   initialState,
-  on(increment, (state) => state + 1),
-  on(decrement, (state) => state - 1),
-  on(reset, (state) => 0)
+  on(ApiSuccess, (state, action) => ({
+    transactions: state.transactions.concat(action.data),
+    error: null,
+  }))
 );
 
-export function dataReducer(state, action) {
+export function transactionsReducer(state, action) {
   return _dataReducer(state, action);
 }

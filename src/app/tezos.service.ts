@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import config from '../config.json';
-
 import Transaction from './transaction';
-
 import { Observable, of, Subject } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
@@ -14,35 +12,36 @@ export class TezosService {
   private url = config.apiUrl;
   private data: Transaction[] = [];
   public data$ = new Subject<Transaction[]>();
+  private currentID;
 
-  httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-  };
-
-  constructor(private http: HttpClient) {
-    this.updateTransactions();
-  }
+  constructor(private http: HttpClient) {}
 
   /** GET Transactions Observable */
   getTransactions(): Observable<Transaction[]> {
-    return this.data$.asObservable();
-  }
-
-  /** UPDATE Transactions from the server */
-  updateTransactions(): void {
-    this.http
-      .get<Transaction[]>(this.url)
+    return this.http
+      .get<Transaction[]>(
+        this.currentID ? this.url + '&cursor.lte=' + this.currentID : this.url
+      )
       .pipe(
         tap((_) => this.log('fetched Transactions')),
+        map((transactions) => {
+          return transactions.map(
+            (t): Transaction => {
+              this.currentID = t[0];
+              return {
+                id: t[0],
+                type: t[1],
+                amount: t[2],
+                date: t[3],
+                address: t[4],
+              };
+            }
+          );
+        }),
         catchError((err) => {
           throw new Error('error in source. Details: ' + err);
         })
-      )
-      .subscribe((newData) => {
-        Array.prototype.push.apply(this.data, newData);
-        this.data$.next(this.data);
-        console.log(this.data);
-      });
+      );
   }
 
   /**

@@ -1,6 +1,28 @@
-<div *ngFor="let item of transactions">
-    <h1>Type: {{ item[1] }}</h1>
-    <h1>Volume: {{ item[2] }}</h1>
-    <h1>Date: {{ item[3] | date:'MMM d y, h:mm' }}</h1>
-    <h1>Sender: {{ item[4] }}</h1>
+<div class="container ">
+    <cdk-virtual-scroll-viewport #scrollViewport [itemSize]="59" (scrolledIndexChange)="updateData($event)"
+        class="card">
+        <div class="recents"> <i class="material-icons">
+                history
+            </i> <span>Recent Transactions</span></div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th [style.top]="inverseOfTranslation" scope="col">Type</th>
+                    <th [style.top]="inverseOfTranslation" scope="col">Amount XTZ ( USD )</th>
+                    <th [style.top]="inverseOfTranslation" scope="col">Date</th>
+                    <th [style.top]="inverseOfTranslation" scope="col">Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *cdkVirtualFor="let row of (transactions$ | async)">
+                    <td>{{row.type }}</td>
+                    <td>{{row.amount}} XTZ <small>{{row.amount*3.14}} USD</small></td>
+                    <td>{{row.date | date:"MMM d y, hh:mm" }}</td>
+                    <td>{{row.address }}</td>
+                </tr>
+            </tbody>
+
+        </table>
+    </cdk-virtual-scroll-viewport>
 </div>
